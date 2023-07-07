@@ -1,0 +1,209 @@
+﻿@model PagedList.IPagedList<HW6.Models.product>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Prodcuts</h2>
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+<form class="form-inline">
+    <div class="form-group mb-2">
+
+        <input type="text" name="searchstring" class="form-control-plaintext" id="staticEmail2" placeholder="Search Name">
+    </div>
+
+    <span style="margin-left:1%"></span>
+    <div class="form-group mx-sm-3 mb-2">
+
+
+        <button type="submit" class="btn btn-primary"> Search</button>
+    </div>
+    <span style="margin-left:1%"></span>
+    <button type="button" onclick="create()" class="btn btn-info">Create</button>
+</form>
+  
+}
+
+<br /><br />
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Year
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Brand
+        </th>
+        <th>
+            Category
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.product_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.model_year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.list_price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.brand.brand_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.category.category_name)
+            </td>
+            <td>
+                <button class="btn btn-primary" onclick="edit(@item.product_id)">Edit</button> |
+                <button class="btn btn-info" onclick="details(@item.product_id)">Details</button>|
+                <button class="btn btn-danger" onclick="Delele(@item.product_id)">Delete</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+               Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+                @Html.PagedListPager(Model, page => Url.Action("Index",
+         new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+
+
+
+                <!-- Modal -->
+                <div id="mod" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                 
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="add" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="edit" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <script type="text/javascript">
+
+                    function Delele(id) {
+                        var ans = confirm("Are you sure you want to delete this Record?");
+                        if (ans) {
+                            var Url = '@Url.Action("Delete","Home", new { id = -1})'
+                            Url = Url.replace(-1, id)
+                            $.ajax({
+                                url: Url,
+                                type: "POST",
+                                contentType: "application/json;charset=UTF-8",
+                                dataType: "json",
+                                success: function () {
+
+                                    document.location.reload()
+                                }
+
+                            });
+                        }
+                    }
+
+                    function details(id) {
+                        var Url = '@Url.Action("Details","Home", new { idnty = -1})'
+                        Url = Url.replace(-1,id)
+                        var g = 0
+                        $.ajax({
+                            type: "POST",
+                            data: id,
+                            url: Url,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "html",
+                            success: function (response) {
+
+                                $("#mod").find(".modal-body").html(response)
+                                $("#mod").modal('show');
+                            }
+                        })
+                    };
+
+                    function create() {
+
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("Create","Home")",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "html",
+                            success: function (response) {
+
+                                $("#add").find(".modal-body").html(response)
+                                $("#add").modal('show');
+                            }
+                        })
+
+                    };
+
+
+                    function edit(id) {
+                        var Url = '@Url.Action("Edit","Home", new { id = -1})'
+                        Url = Url.replace(-1,id)
+                        var g = 0
+                        $.ajax({
+                            type: "GET",
+                            data: id,
+                            url: Url,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "html",
+                            success: function (response) {
+
+                                $("#edit").find(".modal-body").html(response)
+                                $("#edit").modal('show');
+                            }
+                        })
+                    }
+
+                </script>
+

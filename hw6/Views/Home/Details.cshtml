@@ -1,0 +1,83 @@
+﻿@model HW6.ViewModels.ProductDetailsVM
+
+<div>
+    <h4>Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.product.product_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product.product_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.product.model_year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product.model_year)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.product.list_price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product.list_price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.product.brand.brand_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product.brand.brand_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.product.category.category_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.product.category.category_name)
+        </dd>
+
+    </dl>
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            Store
+        </th>
+        <th>
+            Quantity
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model.stores)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.store_name)
+            </td>
+            <td>
+                @if (item.count == 0)
+                {
+
+                    <p style="color:red">Out Of Stock</p>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.count)
+                }
+
+            </td>
+
+        </tr>
+    }
+
+</table>

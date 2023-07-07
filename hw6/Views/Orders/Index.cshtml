@@ -1,0 +1,92 @@
+﻿@model PagedList.IPagedList<HW6.ViewModels.OrderVM>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Orders</h2>
+@using (Html.BeginForm("Index", "Orders", FormMethod.Get, new { @class = "form-inline", role = "form" }))
+{
+    <form class="form-inline">
+        <div class="form-group mb-2">
+
+            <input type="date" format="dd/mm/yyyy" name="searchstring" class="form-control-plaintext" id="staticEmail2" placeholder="Search Book Name">
+        </div>
+
+        <span style="margin-left:1%"></span>
+        <div class="form-group mx-sm-3 mb-2">
+
+
+            <button type="submit" class="btn btn-primary"> Search</button>
+        </div>
+
+    </form>
+}
+
+
+@foreach (var item in Model)
+{
+
+    <h2> Order @item.order_id - @item.order_date.Replace('-','/') </h2>
+
+
+    <table class="table">
+        <tr>
+            <th>
+                Product Name
+            </th>
+            <th>
+                List Price
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Total
+            </th>
+
+        </tr>
+
+        @foreach (var x in item.products)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => x.product_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => x.list_price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => x.quantity)
+                </td>
+                <td>
+                    @(x.quantity * x.list_price)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td><b>Grand Total: </b></td>
+            <td>
+                @{
+                    decimal dec = 0;
+                    foreach (var y in item.products)
+                    {
+                        dec = dec + (y.list_price * y.quantity);
+                    }
+                    <b>@dec</b>}
+                </td>
+            </tr>
+
+        </table>
+
+    }
+
+<br />
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+                @Html.PagedListPager(Model, page => Url.Action("Index",
+                    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
